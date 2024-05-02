@@ -76,7 +76,6 @@ typedef PerfectAutocompleteOptionToString<T extends Object> = String Function(
 /// The user's text input is received in a field built with the
 /// [fieldViewBuilder] parameter. The options to be displayed are determined
 /// using [optionsBuilder] and rendered with [optionsViewBuilder].
-/// {@endtemplate}
 ///
 /// This is a core framework widget with very basic UI.
 ///

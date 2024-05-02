@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 @protected
 class PerfectTextController {
+  static final _focused = Rxn<PerfectTextController>();
+  static PerfectTextController? get focused => _focused.value;
+  static set focused(PerfectTextController? v) => _focused.value = v;
+
   final TextEditingController textController;
   final FocusNode focusNode;
   final void Function(String value)? onTextChange;
@@ -12,6 +17,10 @@ class PerfectTextController {
       textController.selection =
           TextSelection(baseOffset: 0, extentOffset: text.length);
     }
+  }
+
+  void unfocus() {
+    focusNode.unfocus();
   }
 
   void requestFocus([FocusNode? node]) {
@@ -25,6 +34,7 @@ class PerfectTextController {
 
   bool get hasFocus => focusNode.hasPrimaryFocus;
 
+  final rxText = RxString('');
   String get text => textController.text;
   set text(String value) => textController.text = value;
 
@@ -45,16 +55,30 @@ class PerfectTextController {
                     descendantsAreTraversable: false,
                   )
                 : FocusNode()) {
-    if (onTextChange != null) {
-      textController.addListener(() => onTextChange?.call(text));
-    }
-    if (selectAllOnFocus) {
-      this.focusNode.addListener(() {
+    textController.addListener(() {
+      if (rxText.value != textController.text) {
+        rxText.value = textController.text;
+      }
+      if (onTextChange != null) {
+        onTextChange?.call(text);
+      }
+    });
+
+    this.focusNode.addListener(() {
+      PerfectTextController.focused =
+          this.focusNode.hasPrimaryFocus ? this : null;
+
+      if (selectAllOnFocus) {
         onFocusChange?.call(this.focusNode.hasPrimaryFocus);
         if (this.focusNode.hasPrimaryFocus) {
           selectAll();
         }
-      });
-    }
+      }
+    });
+  }
+
+  void dispose() {
+    textController.dispose();
+    focusNode.dispose();
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../text_controller/text_controller.dart';
+import '../perfect_text_field.dart';
 
 class DeletePreviousCharIntent extends VoidCallbackIntent {
   DeletePreviousCharIntent(PerfectTextController textController)

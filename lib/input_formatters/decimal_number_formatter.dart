@@ -10,7 +10,7 @@ class DecimalNumberFormatter extends TextInputFormatter {
   const DecimalNumberFormatter({
     this.min,
     this.max,
-    this.decimalLength = 1,
+    this.decimalLength = 2,
     this.replaceLastIfExceeds = true,
   });
 
@@ -19,6 +19,12 @@ class DecimalNumberFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
+    if (oldValue.text.isNotEmpty &&
+        newValue.text.startsWith('0') &&
+        !newValue.text.contains('.')) {
+      return newValue.replaced(const TextRange(start: 0, end: 1), '');
+    }
+
     if (!newValue.text.startsWith('.') &&
         newValue.text.contains('.') &&
         !oldValue.text.contains('.')) {
@@ -36,9 +42,10 @@ class DecimalNumberFormatter extends TextInputFormatter {
       } else if (max != null) {
         if (!(q <= max!)) return oldValue;
       }
-      
-      final decimalDigital = q.toString().split('.').last;
-      if (decimalDigital.length > decimalLength) {
+
+      final decimalDigital = newValue.text.split('.').last;
+      if (newValue.text.contains('.') &&
+          decimalDigital.length > decimalLength) {
         if (replaceLastIfExceeds) {
           final text = oldValue.text.replaceRange(oldValue.text.length - 1,
               oldValue.text.length, decimalDigital.characters.last);

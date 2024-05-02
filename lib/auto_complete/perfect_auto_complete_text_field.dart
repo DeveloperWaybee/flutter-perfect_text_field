@@ -4,9 +4,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:perfect_text_field/src/perfect_text_field.dart';
 import '../auto_complete/perfect_raw_auto_complete.dart';
-import '../text_controller/text_controller.dart';
+import '../perfect_text_field.dart';
 
 /// The type of the [PerfectAutocomplete] callback which returns a [Widget] that
 /// displays on the specific [option] at [index].
@@ -183,7 +182,7 @@ class _AutocompleteField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PerfectTextField(
-      textController,
+      controller: textController,
       onFieldSubmitted: (String value) {
         onFieldSubmitted();
       },

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
+import 'package:perfect_text_field/input_formatters/decimal_number_formatter.dart';
 import 'package:perfect_text_field/perfect_text_field.dart';
 
 void main() {
@@ -34,8 +32,17 @@ class _MyAppState extends State<MyApp> {
           child: SizedBox(
             width: 250,
             child: PerfectTextField(
-              textController,
-              prefixText: "Hello Moto",
+              controller: textController,
+              inputFormatters: const [
+                DecimalNumberFormatter(
+                  min: 1.0,
+                  max: 100.0,
+                  decimalLength: 2,
+                )
+              ],
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
             ),
           ),
         ),
