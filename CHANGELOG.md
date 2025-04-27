@@ -1,3 +1,6 @@
+## 1.1.0+3
+Add dismissKeyboardOnTapOutside parameter to PerfectTextField
+
 ## 1.1.0+2
 Change PerfectTextController.selectAllOnFocus = false
 

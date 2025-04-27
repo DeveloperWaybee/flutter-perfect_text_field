@@ -52,6 +52,7 @@ class PerfectTextField extends TextFormField {
     super.onSaved,
     super.onTap,
     void Function(PointerDownEvent)? onTapOutside,
+    bool dismissKeyboardOnTapOutside = false,
     super.readOnly,
     super.restorationId,
     super.scribbleEnabled,
@@ -118,8 +119,10 @@ class PerfectTextField extends TextFormField {
                       : null,
                   hintText: hintText,
                 ),
-            onTapOutside: onTapOutside ??
-                (v) {
-                  controller.unfocus();
-                });
+            onTapOutside: (v) {
+              if (dismissKeyboardOnTapOutside) {
+                controller.unfocus();
+              }
+              onTapOutside?.call(v);
+            });
 }
