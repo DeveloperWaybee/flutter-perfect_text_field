@@ -41,7 +41,7 @@ class PerfectTextController {
   PerfectTextController({
     TextEditingController? textEditingController,
     FocusNode? focusNode,
-    bool selectAllOnFocus = true,
+    bool selectAllOnFocus = false,
     bool readyOnly = false,
     this.onTextChange,
     this.onFocusChange,
