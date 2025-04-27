@@ -10,7 +10,7 @@ environment:
   flutter: ">=3.3.0"
 
 dependencies:
-  get: any
+  get: ^4.7.2
   flutter:
     sdk: flutter
 
