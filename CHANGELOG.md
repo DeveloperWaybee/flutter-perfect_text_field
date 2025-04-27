@@ -1,3 +1,6 @@
+## 1.1.0+2
+Change PerfectTextController.selectAllOnFocus = false
+
 ## 1.1.0
 Package Updates
 
