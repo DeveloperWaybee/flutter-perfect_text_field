@@ -258,7 +258,7 @@ class _PerfectRawAutocompleteState<T extends Object>
 
   // Called when _textEditingController changes.
   Future<void> _onChangedField() async {
-    final TextEditingValue value = _controller.textController.value;
+    final TextEditingValue value = _controller.value;
     final Iterable<T> options = await widget.optionsBuilder(
       value,
     );
@@ -301,7 +301,7 @@ class _PerfectRawAutocompleteState<T extends Object>
     final selectionString = widget.displayStringForOption(nextSelection);
 
     final updatedText = widget.onSelected?.call(_selection!) ?? selectionString;
-    _controller.textController.value = TextEditingValue(
+    _controller.value = TextEditingValue(
       selection: TextSelection.collapsed(offset: updatedText.length),
       text: updatedText,
     );
@@ -437,73 +437,34 @@ class _PerfectRawAutocompleteState<T extends Object>
   // Handle a potential change in textEditingController by properly disposing of
   // the old one and setting up the new one, if needed.
   void _updateTextEditingController(
-      TextEditingController? old, TextEditingController? current) {
+      PerfectTextController? old, PerfectTextController? current) {
     if ((old == null && current == null) || old == current) {
       return;
     }
     if (old == null) {
-      _controller.textController.removeListener(_onChangedField);
-      _controller.textController.dispose();
-      final newController = PerfectTextController(
-        textEditingController: current!,
-        focusNode: _controller.focusNode,
-      );
+      _controller.removeListener(_onChangedField);
+      _controller.dispose();
+      final newController = current!.copyWith();
       _controller = newController;
     } else if (current == null) {
-      _controller.textController.removeListener(_onChangedField);
+      _controller.removeListener(_onChangedField);
       final newController = PerfectTextController(
-        textEditingController: TextEditingController(),
         focusNode: _controller.focusNode,
       );
       _controller = newController;
     } else {
-      _controller.textController.removeListener(_onChangedField);
-      final newController = PerfectTextController(
-        textEditingController: current,
-        focusNode: _controller.focusNode,
-      );
+      _controller.removeListener(_onChangedField);
+      final newController = current.copyWith();
       _controller = newController;
     }
-    _controller.textController.addListener(_onChangedField);
-  }
-
-  // Handle a potential change in focusNode by properly disposing of the old one
-  // and setting up the new one, if needed.
-  void _updateFocusNode(FocusNode? old, FocusNode? current) {
-    if ((old == null && current == null) || old == current) {
-      return;
-    }
-    if (old == null) {
-      _controller.focusNode.removeListener(_onChangedFocus);
-      _controller.focusNode.dispose();
-      final newController = PerfectTextController(
-        textEditingController: _controller.textController,
-        focusNode: current!,
-      );
-      _controller = newController;
-    } else if (current == null) {
-      _controller.focusNode.removeListener(_onChangedFocus);
-      final newController = PerfectTextController(
-        textEditingController: _controller.textController,
-        focusNode: FocusNode(),
-      );
-      _controller = newController;
-    } else {
-      _controller.focusNode.removeListener(_onChangedFocus);
-      final newController = PerfectTextController(
-        textEditingController: _controller.textController,
-        focusNode: current,
-      );
-      _controller = newController;
-    }
-    _controller.focusNode.addListener(_onChangedFocus);
+    _controller.addListener(_onChangedField);
   }
 
   @override
   void initState() {
     super.initState();
     _controller = widget.textController ?? PerfectTextController();
-    _controller.textController.addListener(_onChangedField);
+    _controller.addListener(_onChangedField);
     _controller.focusNode.addListener(_onChangedFocus);
     _previousOptionAction =
         _AutocompleteCallbackAction<PerfectAutocompletePreviousOptionIntent>(
@@ -526,12 +487,8 @@ class _PerfectRawAutocompleteState<T extends Object>
   void didUpdateWidget(PerfectRawAutocomplete<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateTextEditingController(
-      oldWidget.textController?.textController,
-      widget.textController?.textController,
-    );
-    _updateFocusNode(
-      oldWidget.textController?.focusNode,
-      widget.textController?.focusNode,
+      oldWidget.textController,
+      widget.textController,
     );
     _updateActions();
     _updateOverlay();
@@ -539,11 +496,10 @@ class _PerfectRawAutocompleteState<T extends Object>
 
   @override
   void dispose() {
-    _controller.textController.removeListener(_onChangedField);
+    _controller.removeListener(_onChangedField);
     _controller.focusNode.removeListener(_onChangedFocus);
     if (widget.textController == null) {
-      _controller.textController.dispose();
-      _controller.focusNode.dispose();
+      _controller.dispose();
     }
     _floatingOptions?.remove();
     _floatingOptions = null;

@@ -14,7 +14,43 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final textController = PerfectTextController();
+  final decimalFormatterTextController = PerfectTextController();
+  final chipTextController = PerfectTextController(
+    decorations: {
+      DecorationType.hashtag: DecorationStyle(
+        decoration: BoxDecoration(
+          color: Colors.blue.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        textStyle: TextStyle(color: Colors.blue),
+        onTap: (t) => print('Hashtag tapped: $t'),
+      ),
+      DecorationType.mention: DecorationStyle(
+        decoration: BoxDecoration(
+          color: Colors.green.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        textStyle: TextStyle(color: Colors.green),
+        onTap: (t) => print('Mention tapped: $t'),
+      ),
+      DecorationType.email: DecorationStyle(
+        decoration: BoxDecoration(
+          color: Colors.orange.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        textStyle: TextStyle(color: Colors.orange),
+        onTap: (t) => print('Email tapped: $t'),
+      ),
+      DecorationType.phone: DecorationStyle(
+        decoration: BoxDecoration(
+          color: Colors.red.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        textStyle: TextStyle(color: Colors.red),
+        onTap: (t) => print('Phone tapped: $t'),
+      ),
+    },
+  );
 
   @override
   void initState() {
@@ -28,23 +64,33 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Perfect Text Field'),
         ),
-        body: Center(
-          child: SizedBox(
-            width: 250,
-            child: PerfectTextField(
-              controller: textController,
-              inputFormatters: const [
-                DecimalNumberFormatter(
-                  min: 1.0,
-                  max: 100.0,
-                  decimalLength: 2,
-                )
-              ],
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            ListTile(
+              title: const Text('Decimal Number Formatter'),
+              subtitle: PerfectTextField(
+                controller: decimalFormatterTextController,
+                dismissKeyboardOnTapOutside: true,
+                inputFormatters: const [
+                  DecimalNumberFormatter(
+                    min: 0,
+                    max: 100.0,
+                    decimalLength: 2,
+                  )
+                ],
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
               ),
             ),
-          ),
+            ListTile(
+              title: const Text('Chip Text Field'),
+              subtitle: PerfectTextField(
+                controller: chipTextController,
+              ),
+            ),
+          ],
         ),
       ),
     );
