@@ -18,6 +18,18 @@ A Flutter package providing a versatile and customizable text field with extende
 - **Auto-complete**: Supports auto-complete functionality, seamlessly integrated into the `PerfectTextField`.
 - **Event Handling**: Enhanced event handling capabilities for changes in text and focus, along with custom actions on external taps.
 
+### **New** Advanced Token Decoration (PerfectTextController)
+- **Hashtags, Mentions, Emails, Phone Numbers**: Automatically detects and highlights tokens in the text.
+- **Delimiter Matching**: Ensures tokens are only matched when followed by whitespace or punctuation (` `, `,`, `.`, `!`, `?`), avoiding partial-word matches.
+- **dlibphonenumber Integration**: Leverages the `dlibphonenumber` package to accurately detect phone numbers in various formats based on the provided `phoneRegion`.
+- **Custom `DecorationStyle`**: Configure styling and behavior for each `DecorationType` (hashtag, mention, email, phone) including:
+  - `decoration` (BoxDecoration)
+  - `padding` & `margin` (EdgeInsets)
+  - `textStyle` (TextStyle)
+  - `onTap` callback
+  - `deleteOnTap` flag to remove tokens on tap
+- **Multiple Occurrences**: Highlights every occurrence of a token, even if it appears multiple times.
+
 ### PerfectRawAutocomplete
 - **Customizable Options**: Fully customizable autocomplete options that can be styled and handled according to your application's needs.
 - **Reactive User Input Handling**: Dynamically generates suggestions based on user input.
@@ -31,7 +43,6 @@ A Flutter package providing a versatile and customizable text field with extende
 - **Smart Correction**: Optionally replaces the last digit if input exceeds the maximum decimal length, ensuring continuous input flow without the need to delete characters manually.
 - **Flexible Input Handling**: Prevents undesired inputs like leading zeros and improperly placed decimal points.
 
-
 ## Getting Started
 
 To use this package, add `perfect_text_field` as a dependency in your `pubspec.yaml` file.
@@ -43,9 +54,9 @@ dependencies:
   perfect_text_field: 1.0.0
 ```
 
-## PerfectTextField Usage
+## Usage Examples
 
-Here is a simple example of how to use `PerfectTextField` in your Flutter application:
+### PerfectTextField Example
 
 ```dart
 import 'package:flutter/material.dart';
@@ -63,10 +74,10 @@ class MyApp extends StatelessWidget {
           child: PerfectTextField(
             controller: PerfectTextController(
               onTextChange: (text) {
-                print("Text changed: $text");
+                print("Text changed: \$text");
               },
               onFocusChange: (hasFocus) {
-                print("Field has focus: $hasFocus");
+                print("Field has focus: \$hasFocus");
               },
             ),
             inputFormatters: [
@@ -85,88 +96,56 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-## PerfectRawAutocomplete Usage
+### Advanced Token Decoration Example
 
 ```dart
-import 'package:flutter/material.dart';
-import 'package:perfect_raw_autocomplete/perfect_raw_autocomplete.dart';
-
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text('Perfect Raw Autocomplete Example')),
-        body: PerfectRawAutocomplete<String>(
-          optionsBuilder: (TextEditingValue textEditingValue) {
-            // Assume your logic to suggest autocomplete options
-            return ['Apple', 'Banana', 'Cherry'].where((String option) {
-              return option.contains(textEditingValue.text.toLowerCase());
-            });
-          },
-          fieldViewBuilder: (BuildContext context, PerfectTextController textController, VoidCallback onFieldSubmitted) {
-            return TextFormField(
-              controller: textController.textController,
-              onFieldSubmitted: (String value) => onFieldSubmitted(),
-            );
-          },
-          optionsViewBuilder: (BuildContext context, PerfectAutocompleteOnSelected<String> onSelected, Iterable<String> options, void Function(Size?) onSizeChange) {
-            return Material(
-              elevation: 4.0,
-              child: ListView(
-                children: options.map((String option) {
-                  return GestureDetector(
-                    onTap: () {
-                      onSelected(option);
-                    },
-                    child: ListTile(
-                      title: Text(option),
-                    ),
-                  );
-                }).toList(),
-              ),
-            );
-          },
-          onSelected: (String selection) {
-            print('You just selected $selection');
-          },
-        ),
+final controller = PerfectTextController(
+  text: 'Hello @alice, email me at alice@example.com. Call +1 800-123-4567? #flutter',
+  decorations: {
+    DecorationType.hashtag: DecorationStyle(
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(4),
       ),
-    );
-  }
-}
+      textStyle: TextStyle(color: Colors.blue),
+      onTap: (tag) => print('Hashtag tapped: \$tag'),
+      deleteOnTap: false,
+    ),
+    DecorationType.mention: DecorationStyle(
+      decoration: BoxDecoration(
+        color: Colors.green.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      textStyle: TextStyle(color: Colors.green),
+      onTap: (mention) => print('Mention tapped: \$mention'),
+    ),
+    DecorationType.email: DecorationStyle(
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      textStyle: TextStyle(color: Colors.orange),
+      onTap: (email) => print('Email tapped: \$email'),
+    ),
+    DecorationType.phone: DecorationStyle(
+      decoration: BoxDecoration(
+        color: Colors.red.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      textStyle: TextStyle(color: Colors.red),
+      onTap: (phone) => print('Phone tapped: \$phone'),
+      deleteOnTap: true,
+    ),
+  },
+  phoneRegion: 'US',
+);
+
+TextField(
+  controller: controller,
+  maxLines: null,
+  decoration: InputDecoration(hintText: 'Type #tags, @mentions, emails, phones…'),
+),
 ```
-
-## Parameters
-
-### PerfectTextField
-`PerfectTextField` supports all the parameters of `TextFormField` plus additional ones specific to its functionality:
-
-- `onTapOutside`: Callback fired when a tap is detected outside the text field.
-- `prefixText`: Optional text to display as a prefix within the text field.
-- `hintText`: Text that suggests what sort of input the field accepts.
-- Additional customization parameters such as `cursorColor`, `cursorRadius`, etc.
-
-
-### PerfectTextController
-- `optionsBuilder`: Define how suggestions are generated based on user input.
-- `fieldViewBuilder`: Build the text field widget for input.
-- `optionsViewBuilder`: Build the widget that displays the suggestions.
-- `onSelected`: A callback that fires when an option is selected, allowing for custom action.
-
-### PerfectRawAutocomplete
-`PerfectRawAutocomplete` is a robust Flutter package designed for implementing customized autocomplete functionality within your Flutter applications. It leverages the fundamental architecture of Flutter's `RawAutocomplete` to allow for greater flexibility and customization.
-
-### DecimalNumberFormatter
-`DecimalNumberFormatter` provides a `TextInputFormatter` for handling decimal inputs within text fields. This formatter not only enforces numeric constraints but also manages decimal precision, making it ideal for financial and other precision-required inputs.
-
-min: The minimum value allowed.
-max: The maximum value allowed.
-decimalLength: Maximum number of decimal digits.
-replaceLastIfExceeds: Whether to replace the last digit when exceeding the decimal length (default is true).
-
 
 ## Contributions
 
@@ -175,4 +154,4 @@ Contributions are welcome! If you have suggestions or issues, please feel free t
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
+
