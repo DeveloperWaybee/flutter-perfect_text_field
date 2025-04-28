@@ -1,3 +1,6 @@
+## 2.1.0
+Remove GetX, Changed Rx to ValueNotifier
+
 ## 2.0.0
 feat: Update Runner scheme and AppDelegate for new Xcode version
 

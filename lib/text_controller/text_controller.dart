@@ -1,6 +1,5 @@
 import 'package:dlibphonenumber/dlibphonenumber.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 @protected
 enum DecorationType { hashtag, mention, email, phone }
@@ -33,9 +32,7 @@ class _DecorationMatch {
 
 @protected
 class PerfectTextController extends TextEditingController {
-  static final _focused = Rxn<PerfectTextController>();
-  static PerfectTextController? get focused => _focused.value;
-  static set focused(PerfectTextController? v) => _focused.value = v;
+  static PerfectTextController? focused;
 
   final FocusNode focusNode;
   final void Function(String value)? onTextChange;
@@ -73,7 +70,7 @@ class PerfectTextController extends TextEditingController {
 
   bool get hasFocus => focusNode.hasPrimaryFocus;
 
-  final rxText = RxString('');
+  final rxText = ValueNotifier<String>('');
 
   PerfectTextController({
     FocusNode? focusNode,
