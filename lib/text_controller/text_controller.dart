@@ -1,4 +1,5 @@
 import 'package:dlibphonenumber/dlibphonenumber.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 @protected
@@ -8,9 +9,7 @@ enum DecorationType { hashtag, mention, email, phone, custom }
 class DecorationStyle {
   final DecorationType type;
   final List<DecorationMatch> Function(String text)? getMatches;
-  final Decoration? decoration;
-  final EdgeInsetsGeometry padding;
-  final EdgeInsetsGeometry margin;
+  final Color backgroundColor;
   final TextStyle? textStyle;
   final ValueChanged<String>? onTap;
   final bool deleteOnTap;
@@ -18,9 +17,7 @@ class DecorationStyle {
   const DecorationStyle({
     required this.type,
     this.getMatches,
-    this.decoration,
-    this.padding = const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-    this.margin = const EdgeInsets.symmetric(horizontal: 2),
+    this.backgroundColor = Colors.transparent,
     this.textStyle,
     this.onTap,
     this.deleteOnTap = true,
@@ -187,12 +184,10 @@ class PerfectTextController extends TextEditingController {
   ) {
     final spans = <InlineSpan>[];
     int last = 0;
-    for (var decoration in decorations) {
-      if (decoration.decoration == null && decoration.getMatches == null) {
-        continue;
-      }
+    List<(DecorationStyle, DecorationMatch)> matches = [];
 
-      final matches = () {
+    for (var decoration in decorations) {
+      final tempMatches = () {
         if (decoration.getMatches != null) {
           final temp = decoration.getMatches!(textValue);
           temp.sort((a, b) => a.start.compareTo(b.start));
@@ -212,30 +207,38 @@ class PerfectTextController extends TextEditingController {
           }
         }
       }();
-      if (matches.isEmpty) continue;
 
-      for (final dm in matches) {
-        if (dm.start < last) continue;
-        if (dm.start > last) {
-          spans.add(TextSpan(
-            text: textValue.substring(last, dm.start),
-            style: defaultStyle,
-          ));
-        }
-        spans.add(_buildDecorationSpan(
-          decoration,
-          dm,
-          textValue,
-          defaultStyle,
-        ));
-        last = dm.end;
-      }
-      if (last < textValue.length) {
+      matches.addAll(List.generate(
+        tempMatches.length,
+        (index) => (decoration, tempMatches[index]),
+      ));
+    }
+
+    // 👉 FIX: Sort all matches globally by start
+    matches.sort((a, b) => a.$2.start.compareTo(b.$2.start));
+
+    for (final dm in matches) {
+      if (dm.$2.start < last) continue;
+      if (dm.$2.start > last) {
         spans.add(TextSpan(
-          text: textValue.substring(last),
+          text: textValue.substring(last, dm.$2.start),
           style: defaultStyle,
         ));
+        // continue;
       }
+      spans.add(_buildDecorationSpan(
+        dm.$1,
+        dm.$2,
+        textValue,
+        defaultStyle,
+      ));
+      last = dm.$2.end;
+    }
+    if (last < textValue.length) {
+      spans.add(TextSpan(
+        text: textValue.substring(last),
+        style: defaultStyle,
+      ));
     }
     return spans;
   }
@@ -249,10 +252,15 @@ class PerfectTextController extends TextEditingController {
   ) {
     final token = textValue.substring(dm.start, dm.end);
     final cfg = ds;
-    return WidgetSpan(
-      alignment: PlaceholderAlignment.middle,
-      child: GestureDetector(
-        onTap: () {
+    return TextSpan(
+      text: token,
+      style: (cfg.textStyle ?? defaultStyle).copyWith(
+        background: Paint()
+          ..color = cfg.backgroundColor
+          ..style = PaintingStyle.fill,
+      ),
+      recognizer: TapGestureRecognizer()
+        ..onTap = () {
           if (cfg.deleteOnTap) {
             final newText = textValue.replaceRange(dm.start, dm.end, '');
             text = newText;
@@ -260,13 +268,6 @@ class PerfectTextController extends TextEditingController {
           }
           cfg.onTap?.call(token);
         },
-        child: Container(
-          decoration: cfg.decoration,
-          padding: cfg.padding,
-          margin: cfg.margin,
-          child: Text(token, style: cfg.textStyle ?? defaultStyle),
-        ),
-      ),
     );
   }
 

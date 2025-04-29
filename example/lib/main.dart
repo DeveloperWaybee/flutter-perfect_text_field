@@ -19,37 +19,25 @@ class _MyAppState extends State<MyApp> {
     decorations: [
       DecorationStyle(
         type: DecorationType.hashtag,
-        decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(4),
-        ),
+        backgroundColor: Colors.blue.withOpacity(0.2),
         textStyle: TextStyle(color: Colors.blue),
         onTap: (t) => print('Hashtag tapped: $t'),
       ),
       DecorationStyle(
         type: DecorationType.mention,
-        decoration: BoxDecoration(
-          color: Colors.green.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(4),
-        ),
+        backgroundColor: Colors.green.withOpacity(0.2),
         textStyle: TextStyle(color: Colors.green),
         onTap: (t) => print('Mention tapped: $t'),
       ),
       DecorationStyle(
         type: DecorationType.email,
-        decoration: BoxDecoration(
-          color: Colors.orange.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(4),
-        ),
+        backgroundColor: Colors.orange.withOpacity(0.2),
         textStyle: TextStyle(color: Colors.orange),
         onTap: (t) => print('Email tapped: $t'),
       ),
       DecorationStyle(
         type: DecorationType.phone,
-        decoration: BoxDecoration(
-          color: Colors.red.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(4),
-        ),
+        backgroundColor: Colors.red.withOpacity(0.2),
         textStyle: TextStyle(color: Colors.red),
         onTap: (t) => print('Phone tapped: $t'),
       ),

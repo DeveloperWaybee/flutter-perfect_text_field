@@ -1,3 +1,6 @@
+## 2.3.0
+Simplify DecorationStyle by removing decoration property and updating text rendering
+
 ## 2.2.0+1
 Handle empty decorations in buildTextSpan method
 

@@ -1,93 +1,114 @@
-# Perfect TextField
 
-A Flutter package providing a versatile and customizable text field with extended functionalities. `PerfectTextField` builds on `TextFormField` and integrates additional features like auto-complete and a custom text controller for advanced text editing scenarios.
+# Perfect Text Field
 
-## Features
+> **An all-in-one Flutter text input toolkit** — editable, decorated, reactive, and smart.  
+> Build rich input fields with token highlighting, auto-complete, number formatting, and custom behaviors, all fully editable.
 
-### PerfectTextField
-- **Custom Text Controller**: Integrates `PerfectTextController` for extended control over text editing and state management.
-- **Auto-complete**: Supports auto-complete functionality with `PerfectAutoCompleteTextField`.
-- **Flexible Text Input**: Allows customization of the text field with numerous parameters such as `cursorColor`, `cursorRadius`, and more for better UI integration.
-- **Event Handling**: Custom event handling for taps outside the text field, allowing for more interactive forms.
-- **Styling Options**: Extensive styling options with default and customizable text styles and decorations.
+---
 
-### PerfectTextController
-- **Custom Text Controller**: Uses `PerfectTextController` to enhance control over text editing, focus management, and state updates with support for reactive programming via `get`.
-- **Reactive State Management**: Leverages Rx variables to reactively manage and observe changes to the text field's content and focus state.
-- **Advanced Focus Control**: Offers methods like `selectAll`, `unfocus`, and `requestFocus` to programmatically control focus and text selection.
-- **Auto-complete**: Supports auto-complete functionality, seamlessly integrated into the `PerfectTextField`.
-- **Event Handling**: Enhanced event handling capabilities for changes in text and focus, along with custom actions on external taps.
+## ✨ Features
 
-### **New** Advanced Token Decoration (PerfectTextController)
-- **Hashtags, Mentions, Emails, Phone Numbers**: Automatically detects and highlights tokens in the text.
-- **Delimiter Matching**: Ensures tokens are only matched when followed by whitespace or punctuation (` `, `,`, `.`, `!`, `?`), avoiding partial-word matches.
-- **dlibphonenumber Integration**: Leverages the `dlibphonenumber` package to accurately detect phone numbers in various formats based on the provided `phoneRegion`.
-- **Custom `DecorationStyle`**: Configure styling and behavior for each `DecorationType` (hashtag, mention, email, phone) including:
-  - `decoration` (BoxDecoration)
-  - `padding` & `margin` (EdgeInsets)
-  - `textStyle` (TextStyle)
-  - `onTap` callback
-  - `deleteOnTap` flag to remove tokens on tap
-- **Multiple Occurrences**: Highlights every occurrence of a token, even if it appears multiple times.
+### 📌 `PerfectTextField`
+- A drop-in replacement for `TextField`/`TextFormField`.
+- Works with `PerfectTextController` for advanced decorations and focus control.
+- Supports token highlights, autocomplete, number input formatting, and more.
 
-### PerfectRawAutocomplete
-- **Customizable Options**: Fully customizable autocomplete options that can be styled and handled according to your application's needs.
-- **Reactive User Input Handling**: Dynamically generates suggestions based on user input.
-- **Keyboard Navigation**: Supports keyboard actions for navigating through suggestions.
-- **Selection Callbacks**: Provides callbacks for handling the selection of suggestions.
-- **Advanced Text Handling**: Integrates with custom `PerfectTextController` for more refined control over text input and focus management.
+### 📋 `PerfectTextController`
+- Detects and highlights:
+  - **Hashtags** (#example)
+  - **Mentions** (@username)
+  - **Emails** (user@example.com)
+  - **Phone Numbers** (+1 234 567 8900 via dlibphonenumber)
+- `DecorationStyle` per token: background color, text style, tap-to-delete option.
+- **Reactive**: Get real-time updates via `rxText` notifier.
+- Full focus control: `requestFocus()`, `selectAll()`, etc.
+- Smart delimiter matching for accurate highlighting.
 
-### DecimalNumberFormatter
-- **Value Constraints**: Allows setting minimum and maximum values for the input.
-- **Decimal Precision**: Controls the number of digits allowed after the decimal point.
-- **Smart Correction**: Optionally replaces the last digit if input exceeds the maximum decimal length, ensuring continuous input flow without the need to delete characters manually.
-- **Flexible Input Handling**: Prevents undesired inputs like leading zeros and improperly placed decimal points.
+### 🔍 `PerfectAutocomplete`
+- Material Design styled autocomplete widget.
+- Async or sync options building.
+- Keyboard navigation (up/down arrows).
+- Fully customizable field and options list.
+- Built on top of `PerfectRawAutocomplete`.
 
-## Getting Started
+### 🛠 `PerfectRawAutocomplete`
+- Raw, flexible, low-level autocomplete engine.
+- Overlay-based options with highlighted selection.
+- Provides building blocks for custom autocomplete UIs.
 
-To use this package, add `perfect_text_field` as a dependency in your `pubspec.yaml` file.
+### 🔢 `DecimalNumberFormatter`
+- Text input formatter to restrict number fields:
+  - Minimum and maximum values.
+  - Decimal precision (e.g., only 2 digits after `.`).
+  - Smart correction: replaces last character if overflow.
+
+### 🗑 `DeletePreviousCharIntent`
+- Custom intent to delete the previous character inside a `PerfectTextController`.
+- Useful for keyboard shortcut integrations.
+
+---
+
+## 🚀 Getting Started
+
+Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter:
-    sdk: flutter
-  perfect_text_field: 1.0.0
+  perfect_text_field: latest
 ```
 
-## Usage Examples
+---
 
-### PerfectTextField Example
+## 🧩 Quick Example
 
 ```dart
 import 'package:flutter/material.dart';
 import 'package:perfect_text_field/perfect_text_field.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final controller = PerfectTextController(
+      text: 'Welcome to #Flutter! Contact @support or email hello@flutter.dev.',
+      decorations: [
+        DecorationStyle(
+          type: DecorationType.hashtag,
+          backgroundColor: Colors.blue.withOpacity(0.2),
+          textStyle: const TextStyle(color: Colors.blue),
+        ),
+        DecorationStyle(
+          type: DecorationType.mention,
+          backgroundColor: Colors.green.withOpacity(0.2),
+          textStyle: const TextStyle(color: Colors.green),
+        ),
+        DecorationStyle(
+          type: DecorationType.email,
+          backgroundColor: Colors.orange.withOpacity(0.2),
+          textStyle: const TextStyle(color: Colors.orange),
+        ),
+      ],
+      phoneRegion: 'US',
+    );
+
     return MaterialApp(
+      title: 'Perfect Text Field Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
       home: Scaffold(
-        appBar: AppBar(title: Text('Perfect TextField Example')),
-        body: Center(
+        appBar: AppBar(title: const Text('Perfect TextField Example')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: PerfectTextField(
-            controller: PerfectTextController(
-              onTextChange: (text) {
-                print("Text changed: \$text");
-              },
-              onFocusChange: (hasFocus) {
-                print("Field has focus: \$hasFocus");
-              },
+            controller: controller,
+            maxLines: null,
+            decoration: const InputDecoration(
+              hintText: 'Type #tags, @mentions, emails, phones...',
             ),
-            inputFormatters: [
-              DecimalNumberFormatter(
-                min: 1.0,
-                max: 100.0,
-                decimalLength: 2,
-              )
-            ],
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
           ),
         ),
       ),
@@ -96,62 +117,27 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-### Advanced Token Decoration Example
+---
+
+## 🎨 Autocomplete Example
 
 ```dart
-final controller = PerfectTextController(
-  text: 'Hello @alice, email me at alice@example.com. Call +1 800-123-4567? #flutter',
-  decorations: {
-    DecorationType.hashtag: DecorationStyle(
-      decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      textStyle: TextStyle(color: Colors.blue),
-      onTap: (tag) => print('Hashtag tapped: \$tag'),
-      deleteOnTap: false,
-    ),
-    DecorationType.mention: DecorationStyle(
-      decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      textStyle: TextStyle(color: Colors.green),
-      onTap: (mention) => print('Mention tapped: \$mention'),
-    ),
-    DecorationType.email: DecorationStyle(
-      decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      textStyle: TextStyle(color: Colors.orange),
-      onTap: (email) => print('Email tapped: \$email'),
-    ),
-    DecorationType.phone: DecorationStyle(
-      decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      textStyle: TextStyle(color: Colors.red),
-      onTap: (phone) => print('Phone tapped: \$phone'),
-      deleteOnTap: true,
-    ),
+PerfectAutocomplete<String>(
+  optionsBuilder: (textEditingValue) async {
+    if (textEditingValue.text.isEmpty) return const Iterable<String>.empty();
+    return ['Apple', 'Banana', 'Cherry'].where(
+      (option) => option.toLowerCase().contains(textEditingValue.text.toLowerCase()),
+    );
   },
-  phoneRegion: 'US',
+  onSelected: (option) => print('Selected: $option'),
 );
-
-TextField(
-  controller: controller,
-  maxLines: null,
-  decoration: InputDecoration(hintText: 'Type #tags, @mentions, emails, phones…'),
-),
 ```
 
-## Contributions
+---
 
-Contributions are welcome! If you have suggestions or issues, please feel free to open an issue or submit a pull request.
+## 📜 License
 
-## License
+MIT License.  
+See the [LICENSE](LICENSE) file for full details.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
+---
