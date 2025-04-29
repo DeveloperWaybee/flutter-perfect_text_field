@@ -126,6 +126,14 @@ class PerfectTextController extends TextEditingController {
     TextStyle? style,
     required bool withComposing,
   }) {
+    if (decorations.isEmpty) {
+      return super.buildTextSpan(
+        context: context,
+        style: style,
+        withComposing: withComposing,
+      );
+    }
+
     final defaultStyle = style ?? DefaultTextStyle.of(context).style;
     final textValue = text;
 

@@ -1,3 +1,6 @@
+## 2.2.0+1
+Handle empty decorations in buildTextSpan method
+
 ## 2.2.0
 Refactor decoration handling to use a list instead of a map for DecorationStyle
 

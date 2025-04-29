@@ -1,6 +1,6 @@
 name: perfect_text_field
 description: "`PerfectTextField` builds on `TextFormField` and integrates additional features like auto-complete and a custom text controller for advanced text editing scenarios."
-version: 2.2.0
+version: 2.2.0+1
 repository: https://github.com/DeveloperWaybee/flutter-perfect_text_field
 issue_tracker: https://github.com/DeveloperWaybee/flutter-perfect_text_field/issues
 homepage: https://waybeetech.com/
