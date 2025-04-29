@@ -1,3 +1,6 @@
+## 2.2.0
+Refactor decoration handling to use a list instead of a map for DecorationStyle
+
 ## 2.1.0
 Remove GetX, Changed Rx to ValueNotifier
 

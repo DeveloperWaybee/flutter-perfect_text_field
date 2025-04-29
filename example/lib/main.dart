@@ -16,8 +16,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final decimalFormatterTextController = PerfectTextController();
   final chipTextController = PerfectTextController(
-    decorations: {
-      DecorationType.hashtag: DecorationStyle(
+    decorations: [
+      DecorationStyle(
+        type: DecorationType.hashtag,
         decoration: BoxDecoration(
           color: Colors.blue.withOpacity(0.2),
           borderRadius: BorderRadius.circular(4),
@@ -25,7 +26,8 @@ class _MyAppState extends State<MyApp> {
         textStyle: TextStyle(color: Colors.blue),
         onTap: (t) => print('Hashtag tapped: $t'),
       ),
-      DecorationType.mention: DecorationStyle(
+      DecorationStyle(
+        type: DecorationType.mention,
         decoration: BoxDecoration(
           color: Colors.green.withOpacity(0.2),
           borderRadius: BorderRadius.circular(4),
@@ -33,7 +35,8 @@ class _MyAppState extends State<MyApp> {
         textStyle: TextStyle(color: Colors.green),
         onTap: (t) => print('Mention tapped: $t'),
       ),
-      DecorationType.email: DecorationStyle(
+      DecorationStyle(
+        type: DecorationType.email,
         decoration: BoxDecoration(
           color: Colors.orange.withOpacity(0.2),
           borderRadius: BorderRadius.circular(4),
@@ -41,7 +44,8 @@ class _MyAppState extends State<MyApp> {
         textStyle: TextStyle(color: Colors.orange),
         onTap: (t) => print('Email tapped: $t'),
       ),
-      DecorationType.phone: DecorationStyle(
+      DecorationStyle(
+        type: DecorationType.phone,
         decoration: BoxDecoration(
           color: Colors.red.withOpacity(0.2),
           borderRadius: BorderRadius.circular(4),
@@ -49,7 +53,7 @@ class _MyAppState extends State<MyApp> {
         textStyle: TextStyle(color: Colors.red),
         onTap: (t) => print('Phone tapped: $t'),
       ),
-    },
+    ],
   );
 
   @override

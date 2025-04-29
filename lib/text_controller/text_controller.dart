@@ -2,10 +2,12 @@ import 'package:dlibphonenumber/dlibphonenumber.dart';
 import 'package:flutter/material.dart';
 
 @protected
-enum DecorationType { hashtag, mention, email, phone }
+enum DecorationType { hashtag, mention, email, phone, custom }
 
 @protected
 class DecorationStyle {
+  final DecorationType type;
+  final List<DecorationMatch> Function(String text)? getMatches;
   final Decoration? decoration;
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry margin;
@@ -14,6 +16,8 @@ class DecorationStyle {
   final bool deleteOnTap;
 
   const DecorationStyle({
+    required this.type,
+    this.getMatches,
     this.decoration,
     this.padding = const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
     this.margin = const EdgeInsets.symmetric(horizontal: 2),
@@ -24,10 +28,9 @@ class DecorationStyle {
 }
 
 /// Internal match model to keep track of token ranges.
-class _DecorationMatch {
+class DecorationMatch {
   final int start, end;
-  final DecorationType type;
-  _DecorationMatch(this.start, this.end, this.type);
+  DecorationMatch(this.start, this.end);
 }
 
 @protected
@@ -44,7 +47,7 @@ class PerfectTextController extends TextEditingController {
   static final RegExp _emailRegex =
       RegExp(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}');
 
-  final Map<DecorationType, DecorationStyle> decorations;
+  final List<DecorationStyle> decorations;
 
   void selectAll() {
     if (text.isNotEmpty) {
@@ -78,7 +81,7 @@ class PerfectTextController extends TextEditingController {
     bool readyOnly = false,
     this.onTextChange,
     this.onFocusChange,
-    this.decorations = const {},
+    this.decorations = const [],
   }) : focusNode = focusNode ??
             (readyOnly
                 ? FocusNode(
@@ -126,48 +129,28 @@ class PerfectTextController extends TextEditingController {
     final defaultStyle = style ?? DefaultTextStyle.of(context).style;
     final textValue = text;
 
-    final matches = _collectMatches(textValue);
-    matches.sort((a, b) => a.start.compareTo(b.start));
-
-    final spans = _buildSpans(textValue, defaultStyle, matches);
+    final spans = _buildSpans(textValue, defaultStyle);
     return TextSpan(style: defaultStyle, children: spans);
   }
 
-  /// Collects all decoration matches in the text.
-  List<_DecorationMatch> _collectMatches(String textValue) {
-    final matches = <_DecorationMatch>[];
-    if (decorations.containsKey(DecorationType.hashtag)) {
-      matches.addAll(
-          _matchRegex(_hashtagRegex, textValue, DecorationType.hashtag));
-    }
-    if (decorations.containsKey(DecorationType.mention)) {
-      matches.addAll(
-          _matchRegex(_mentionRegex, textValue, DecorationType.mention));
-    }
-    if (decorations.containsKey(DecorationType.email)) {
-      matches.addAll(_matchRegex(_emailRegex, textValue, DecorationType.email));
-    }
-    if (decorations.containsKey(DecorationType.phone)) {
-      matches.addAll(_matchPhoneMatches(textValue));
-    }
-    return matches;
-  }
-
   /// Matches a regex and filters by delimiter.
-  List<_DecorationMatch> _matchRegex(
-      RegExp regex, String textValue, DecorationType type) {
-    final result = <_DecorationMatch>[];
+  List<DecorationMatch> _matchRegex(
+    RegExp regex,
+    String textValue,
+    DecorationType type,
+  ) {
+    final result = <DecorationMatch>[];
     for (final m in regex.allMatches(textValue)) {
       if (_hasDelimiter(textValue, m.end)) {
-        result.add(_DecorationMatch(m.start, m.end, type));
+        result.add(DecorationMatch(m.start, m.end));
       }
     }
     return result;
   }
 
   /// Uses dlibphonenumber to find phone numbers and filter by delimiter.
-  List<_DecorationMatch> _matchPhoneMatches(String textValue) {
-    final result = <_DecorationMatch>[];
+  List<DecorationMatch> _matchPhoneMatches(String textValue) {
+    final result = <DecorationMatch>[];
     final phoneUtil = PhoneNumberUtil.instance;
     final phoneMatches = phoneUtil.findNumbers(textValue, '');
     for (final pm in phoneMatches) {
@@ -175,7 +158,7 @@ class PerfectTextController extends TextEditingController {
       final escaped = RegExp.escape(raw);
       for (final m in RegExp(escaped).allMatches(textValue)) {
         if (_hasDelimiter(textValue, m.end)) {
-          result.add(_DecorationMatch(m.start, m.end, DecorationType.phone));
+          result.add(DecorationMatch(m.start, m.end));
         }
       }
     }
@@ -190,35 +173,74 @@ class PerfectTextController extends TextEditingController {
   }
 
   /// Builds InlineSpans from matches and plain text.
-  List<InlineSpan> _buildSpans(String textValue, TextStyle defaultStyle,
-      List<_DecorationMatch> matches) {
+  List<InlineSpan> _buildSpans(
+    String textValue,
+    TextStyle defaultStyle,
+  ) {
     final spans = <InlineSpan>[];
     int last = 0;
-    for (final dm in matches) {
-      if (dm.start < last) continue;
-      if (dm.start > last) {
+    for (var decoration in decorations) {
+      if (decoration.decoration == null && decoration.getMatches == null) {
+        continue;
+      }
+
+      final matches = () {
+        if (decoration.getMatches != null) {
+          final temp = decoration.getMatches!(textValue);
+          temp.sort((a, b) => a.start.compareTo(b.start));
+          return temp;
+        } else {
+          switch (decoration.type) {
+            case DecorationType.hashtag:
+              return _matchRegex(_hashtagRegex, textValue, decoration.type);
+            case DecorationType.mention:
+              return _matchRegex(_mentionRegex, textValue, decoration.type);
+            case DecorationType.email:
+              return _matchRegex(_emailRegex, textValue, decoration.type);
+            case DecorationType.phone:
+              return _matchPhoneMatches(textValue);
+            case DecorationType.custom:
+              return <DecorationMatch>[];
+          }
+        }
+      }();
+      if (matches.isEmpty) continue;
+
+      for (final dm in matches) {
+        if (dm.start < last) continue;
+        if (dm.start > last) {
+          spans.add(TextSpan(
+            text: textValue.substring(last, dm.start),
+            style: defaultStyle,
+          ));
+        }
+        spans.add(_buildDecorationSpan(
+          decoration,
+          dm,
+          textValue,
+          defaultStyle,
+        ));
+        last = dm.end;
+      }
+      if (last < textValue.length) {
         spans.add(TextSpan(
-          text: textValue.substring(last, dm.start),
+          text: textValue.substring(last),
           style: defaultStyle,
         ));
       }
-      spans.add(_buildTokenSpan(dm, textValue, defaultStyle));
-      last = dm.end;
-    }
-    if (last < textValue.length) {
-      spans.add(TextSpan(
-        text: textValue.substring(last),
-        style: defaultStyle,
-      ));
     }
     return spans;
   }
 
   /// Builds a WidgetSpan for a matched token.
-  InlineSpan _buildTokenSpan(
-      _DecorationMatch dm, String textValue, TextStyle defaultStyle) {
+  InlineSpan _buildDecorationSpan(
+    DecorationStyle ds,
+    DecorationMatch dm,
+    String textValue,
+    TextStyle defaultStyle,
+  ) {
     final token = textValue.substring(dm.start, dm.end);
-    final cfg = decorations[dm.type]!;
+    final cfg = ds;
     return WidgetSpan(
       alignment: PlaceholderAlignment.middle,
       child: GestureDetector(
