@@ -1,3 +1,6 @@
+## 2.3.0+1
+Remove redundant final keyword from onTextChange and onFocusChange in PerfectTextController
+
 ## 2.3.0
 Simplify DecorationStyle by removing decoration property and updating text rendering
 

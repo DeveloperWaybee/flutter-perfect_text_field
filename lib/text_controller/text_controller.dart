@@ -35,8 +35,8 @@ class PerfectTextController extends TextEditingController {
   static PerfectTextController? focused;
 
   final FocusNode focusNode;
-  final void Function(String value)? onTextChange;
-  final void Function(bool value)? onFocusChange;
+  void Function(String value)? onTextChange;
+  void Function(bool value)? onFocusChange;
 
   // Separate regex for each decoration type except phone.
   static final RegExp _hashtagRegex = RegExp(r'\#[\w]+');
