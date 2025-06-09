@@ -274,11 +274,11 @@ class PerfectTextController extends TextEditingController {
   @override
   set text(String value) {
     if (value != text) {
+      super.text = value;
       rxText.value = value;
       if (onTextChange != null) {
-        onTextChange?.call(text);
+        onTextChange?.call(value);
       }
-      super.text = value;
     }
   }
 

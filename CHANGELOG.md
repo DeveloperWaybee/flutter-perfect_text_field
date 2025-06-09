@@ -1,3 +1,6 @@
+## 2.3.0+2
+Fix onTextChange callback to provide updated text in PerfectTextController
+
 ## 2.3.0+1
 Remove redundant final keyword from onTextChange and onFocusChange in PerfectTextController
 
