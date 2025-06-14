@@ -53,10 +53,10 @@ packages:
     dependency: transitive
     description:
       name: dlibphonenumber
-      sha256: f9bcc9ca41b84e4762343782a265650107fcd711579b8946ca8f15f634ef8309
+      sha256: "755606fd3b4c6853201d8c60f6b5a2290d3643d1346abe0112f84b19f95eccc7"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.37"
+    version: "1.1.40"
   fake_async:
     dependency: transitive
     description:
@@ -109,14 +109,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  get:
-    dependency: transitive
-    description:
-      name: get
-      sha256: c79eeb4339f1f3deffd9ec912f8a923834bec55f7b49c9e882b8fef2c139d425
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.7.2"
   integration_test:
     dependency: "direct dev"
     description: flutter
@@ -192,7 +184,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.1.0+3"
+    version: "2.3.0+2"
   platform:
     dependency: transitive
     description:
@@ -294,14 +286,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.3.1"
-  web:
-    dependency: transitive
-    description:
-      name: web
-      sha256: "868d88a33d8a87b18ffc05f9f030ba328ffefba92d6c127917a2ba740f9cfe4a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.1"
   webdriver:
     dependency: transitive
     description:

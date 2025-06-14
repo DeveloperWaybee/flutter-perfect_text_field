@@ -1,3 +1,6 @@
+## 2.3.1
+dlibphonenumber: ^1.1.40 package update
+
 ## 2.3.0+2
 Fix onTextChange callback to provide updated text in PerfectTextController
 
