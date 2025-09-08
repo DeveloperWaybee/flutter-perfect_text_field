@@ -1,3 +1,6 @@
+## 2.3.2+1
+fix: update iOS deployment target to 13.0 and improve text change notification in PerfectTextController
+
 ## 2.3.2
 Added focusNode in PerfectTextController
 

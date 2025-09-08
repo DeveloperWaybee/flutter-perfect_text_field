@@ -2,7 +2,7 @@ name: perfect_text_field
 description: >
   A versatile and customizable text field for Flutter with support for token decoration,
   autocomplete, smart number input formatting, and full text editing control.
-version: 2.3.2
+version: 2.3.2+1
 repository: https://github.com/DeveloperWaybee/flutter-perfect_text_field
 issue_tracker: https://github.com/DeveloperWaybee/flutter-perfect_text_field/issues
 homepage: https://waybeetech.com/

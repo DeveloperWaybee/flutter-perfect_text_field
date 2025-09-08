@@ -134,6 +134,13 @@ class PerfectTextController extends TextEditingController {
     final defaultStyle = style ?? DefaultTextStyle.of(context).style;
     final textValue = text;
 
+    if (rxText.value != textValue) {
+      rxText.value = textValue;
+      if (onTextChange != null) {
+        onTextChange?.call(textValue);
+      }
+    }
+
     final spans = _buildSpans(textValue, defaultStyle);
     return TextSpan(style: defaultStyle, children: spans);
   }
