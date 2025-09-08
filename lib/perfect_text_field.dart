@@ -15,6 +15,7 @@ class PerfectTextField extends StatefulWidget {
   /// If not provided, a new [PerfectTextController] will be created.
   /// This is useful for managing the state of the text field.
   final PerfectTextController? controller;
+  final FocusNode? focusNode;
   final bool autocorrect;
   final Iterable<String>? autofillHints;
   final AutovalidateMode? autovalidateMode;
@@ -85,6 +86,7 @@ class PerfectTextField extends StatefulWidget {
   const PerfectTextField({
     super.key,
     this.controller,
+    this.focusNode,
     this.autocorrect = true,
     this.autofillHints,
     this.autovalidateMode,
@@ -164,6 +166,7 @@ class _PerfectTextFieldState extends State<PerfectTextField> {
   late PerfectTextController controller =
       widget.controller ?? PerfectTextController();
 
+  FocusNode? get focusNode => widget.focusNode;
   bool get autocorrect => widget.autocorrect;
   Iterable<String>? get autofillHints => widget.autofillHints;
   AutovalidateMode? get autovalidateMode => widget.autovalidateMode;
@@ -241,7 +244,7 @@ class _PerfectTextFieldState extends State<PerfectTextField> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      focusNode: controller.focusNode,
+      focusNode: focusNode ?? controller.focusNode,
       autocorrect: autocorrect,
       autofillHints: autofillHints,
       autovalidateMode: autovalidateMode,

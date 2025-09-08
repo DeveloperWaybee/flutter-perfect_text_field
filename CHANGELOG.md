@@ -1,3 +1,6 @@
+## 2.3.2
+Added focusNode in PerfectTextController
+
 ## 2.3.1
 dlibphonenumber: ^1.1.40 package update
 
