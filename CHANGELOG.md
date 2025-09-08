@@ -1,3 +1,6 @@
+## 2.3.2+2
+fix: update onTextChange callback in PerfectTextController for better text change handling
+
 ## 2.3.2+1
 fix: update iOS deployment target to 13.0 and improve text change notification in PerfectTextController
 

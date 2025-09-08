@@ -47,6 +47,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
+    chipTextController.onTextChange = (value) {
+      print('Chip Text Changed: $value');
+    };
   }
 
   @override
