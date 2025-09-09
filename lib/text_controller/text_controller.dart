@@ -124,7 +124,9 @@ class PerfectTextController extends TextEditingController {
     required bool withComposing,
   }) {
     if (rxText.value != text) {
-      rxText.value = text;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        rxText.value = text;
+      });
       if (onTextChange != null) {
         onTextChange?.call(text);
       }

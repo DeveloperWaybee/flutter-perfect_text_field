@@ -1,3 +1,6 @@
+## 2.3.2+3
+fix: update rxText value after frame callback to ensure UI consistency
+
 ## 2.3.2+2
 fix: update onTextChange callback in PerfectTextController for better text change handling
 
